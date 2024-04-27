@@ -2,12 +2,34 @@
 
 describe('Funcionalidade:Login', ()=>{
 
-    it('Deve fazer login com sucesso', ()=>{
+    beforeEach(() => {
         cy.visit('http://lojaebac.ebaconline.art.br/minha-conta/')
+    });
+
+    afterEach(() => {
+        cy.screenshot()
+    });
+
+    it('Deve fazer login com sucesso', ()=>{
         cy.get('#username').type('cavalcanti.teste@teste.com')
         cy.get('#password').type('botafogo2010')
         cy.get('.woocommerce-form > .button').click()
-
         cy.get('.woocommerce-MyAccount-content > :nth-child(2)').should('contain', 'Olá, cavalcanti.teste')
     })
+
+    it('Deve exibir uma mensagem de erro ao inserir usário inválido', () => {
+        cy.get('#username').type('cavalcanti@teste.com')
+        cy.get('#password').type('botafogo2010')
+        cy.get('.woocommerce-form > .button').click()
+        cy.get('.woocommerce-error > li').should('contain','Endereço de e-mail desconhecido.')
+    });
+    
+    it('Deve exibir uma mensagem de erro ao inserir senha inválida', () => {
+        cy.get('#username').type('cavalcanti.teste@teste.com')
+        cy.get('#password').type('botogo2010')
+        cy.get('.woocommerce-form > .button').click()
+        cy.get('.woocommerce-error > li').should('contain','A senha fornecida para o e-mail cavalcanti.teste@teste.com está incorreta. Perdeu a senha?')
+        cy.get('.woocommerce-error > li').should('exist')
+    })
+    
 })
